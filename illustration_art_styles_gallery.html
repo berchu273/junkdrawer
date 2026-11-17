@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Illustrator's Compendium — Art Styles Gallery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        paper: '#FAF9F6',
+                        ink: '#18181B',
+                        muted: '#71717A',
+                        border: '#E4E4E7',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FAF9F6;
+            color: #18181B;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Hide scrollbars cleanly on horizontal filter pill strip */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .art-card {
+            transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        @media (hover: hover) {
+            .art-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.08);
+            }
+        }
+        .art-card:active {
+            transform: scale(0.985);
+        }
+        .art-card svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        #modalArtContainer svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        /* Custom scrollbar for modal */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D4D4D8;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-amber-200 selection:text-ink overflow-x-hidden">
+
+    <!-- Top Navigation & Header -->
+    <header class="bg-white/95 backdrop-blur-md border-b border-border sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-5">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="inline-block w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-amber-500"></span>
+                        <span class="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-amber-700">Visual Study Guide</span>
+                    </div>
+                    <h1 class="font-serif text-xl sm:text-3xl font-bold text-ink tracking-tight mt-0.5">
+                        The Illustrator’s Compendium
+                    </h1>
+                </div>
+
+                <!-- Search & Randomizer Controls (16px font on mobile prevents iOS Safari auto-zoom) -->
+                <div class="flex items-stretch gap-2 sm:gap-2.5">
+                    <div class="relative flex-1 sm:w-64">
+                        <svg class="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <input type="text" id="searchInput" placeholder="Search styles, mediums..." 
+                            class="w-full pl-9 pr-4 py-2.5 sm:py-2 text-base sm:text-sm bg-zinc-50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all">
+                    </div>
+                    <button id="surpriseBtn" type="button"
+                        class="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-2.5 sm:py-2 bg-ink hover:bg-zinc-800 active:bg-zinc-900 text-white text-sm font-medium rounded-xl transition-colors cursor-pointer shrink-0">
+                        <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                        <span class="hidden xs:inline sm:inline">Surprise</span>
+                        <span class="hidden md:inline">Me</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Category Filter Pills (Touch-friendly padding & edge-to-edge mobile scroll) -->
+            <div class="flex items-center gap-2 overflow-x-auto pt-3.5 pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar" id="categoryFilters">
+                <button data-category="All" class="filter-pill active px-4 py-2 sm:px-3.5 sm:py-1.5 rounded-full text-xs font-semibold bg-ink text-white transition-all cursor-pointer shrink-0">
+                    All Styles (12)
+                </button>
+                <button data-category="Digital & Commercial" class="filter-pill px-4 py-2 sm:px-3.5 sm:py-1.5 rounded-full text-xs font-semibold bg-zinc-100 text-zinc-700 hover:bg-zinc-200 transition-all cursor-pointer shrink-0">
+                    Digital & Commercial
+                </button>
+                <button data-category="Traditional & Fine Art" class="filter-pill px-4 py-2 sm:px-3.5 sm:py-1.5 rounded-full text-xs font-semibold bg-zinc-100 text-zinc-700 hover:bg-zinc-200 transition-all cursor-pointer shrink-0">
+                    Traditional & Fine Art
+                </button>
+                <button data-category="Historical Movements" class="filter-pill px-4 py-2 sm:px-3.5 sm:py-1.5 rounded-full text-xs font-semibold bg-zinc-100 text-zinc-700 hover:bg-zinc-200 transition-all cursor-pointer shrink-0">
+                    Historical Movements
+                </button>
+                <button data-category="Narrative & Editorial" class="filter-pill px-4 py-2 sm:px-3.5 sm:py-1.5 rounded-full text-xs font-semibold bg-zinc-100 text-zinc-700 hover:bg-zinc-200 transition-all cursor-pointer shrink-0">
+                    Narrative & Editorial
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Gallery Grid -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div class="flex items-center justify-between mb-5 sm:mb-6">
+            <p id="resultsCount" class="text-xs sm:text-sm text-muted font-medium">Showing all 12 illustration styles</p>
+            <span class="text-xs text-muted">Tap any card to study</span>
+        </div>
+
+        <!-- Cards Container -->
+        <div id="galleryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+        <div class="bg-white rounded-3xl border border-border p-6 sm:p-8 shadow-sm">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-border">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-widest text-amber-600">Open-Access Study Resources</span>
+                    <h2 class="font-serif text-xl sm:text-2xl font-bold text-ink mt-1">Free World Museums & Illustration Archives</h2>
+                    <p class="text-sm text-muted mt-1 max-w-2xl">Explore hundreds of thousands of high-resolution, public-domain artworks, woodblock prints, vintage posters, and manuscripts directly from world institutions.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+                <a href="https://www.metmuseum.org/art/collection/search?showOnly=openAccess" target="_blank" rel="noopener noreferrer" class="group p-4 rounded-2xl border border-border hover:border-amber-500 hover:bg-amber-50/30 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between text-xs font-semibold text-amber-700 mb-1">
+                            <span>New York, USA</span>
+                            <svg class="w-4 h-4 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-ink text-base group-hover:text-amber-700">The Met Open Access</h3>
+                        <p class="text-xs text-zinc-600 mt-1.5 leading-relaxed">Over 490,000 public-domain images including Ukiyo-e woodblocks, engravings, and book illustrations.</p>
+                    </div>
+                    <span class="mt-3 text-[11px] font-medium text-muted">metmuseum.org &rarr;</span>
+                </a>
+
+                <a href="https://www.artic.edu/collection?is_public_domain=1" target="_blank" rel="noopener noreferrer" class="group p-4 rounded-2xl border border-border hover:border-amber-500 hover:bg-amber-50/30 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between text-xs font-semibold text-amber-700 mb-1">
+                            <span>Chicago, USA</span>
+                            <svg class="w-4 h-4 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-ink text-base group-hover:text-amber-700">Art Institute of Chicago</h3>
+                        <p class="text-xs text-zinc-600 mt-1.5 leading-relaxed">Ultra-high-res zoomable scans of watercolors, Art Nouveau posters, and Japanese prints.</p>
+                    </div>
+                    <span class="mt-3 text-[11px] font-medium text-muted">artic.edu &rarr;</span>
+                </a>
+
+                <a href="https://collection.cooperhewitt.org/" target="_blank" rel="noopener noreferrer" class="group p-4 rounded-2xl border border-border hover:border-amber-500 hover:bg-amber-50/30 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between text-xs font-semibold text-amber-700 mb-1">
+                            <span>Smithsonian Design</span>
+                            <svg class="w-4 h-4 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-ink text-base group-hover:text-amber-700">Cooper Hewitt Museum</h3>
+                        <p class="text-xs text-zinc-600 mt-1.5 leading-relaxed">Dedicated to graphic design, posters, textile patterns, isometric drawings, and commercial art.</p>
+                    </div>
+                    <span class="mt-3 text-[11px] font-medium text-muted">cooperhewitt.org &rarr;</span>
+                </a>
+
+                <a href="https://www.rijksmuseum.nl/en/rijksstudio" target="_blank" rel="noopener noreferrer" class="group p-4 rounded-2xl border border-border hover:border-amber-500 hover:bg-amber-50/30 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between text-xs font-semibold text-amber-700 mb-1">
+                            <span>Amsterdam, NL</span>
+                            <svg class="w-4 h-4 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-ink text-base group-hover:text-amber-700">Rijksmuseum Rijksstudio</h3>
+                        <p class="text-xs text-zinc-600 mt-1.5 leading-relaxed">Over 700,000 free high-resolution downloads of master engravings, etchings, and botanical illustrations.</p>
+                    </div>
+                    <span class="mt-3 text-[11px] font-medium text-muted">rijksmuseum.nl &rarr;</span>
+                </a>
+            </div>
+    <!-- Study Detail Modal (Mobile Bottom-Sheet & Unified Scroll) -->
+    <div id="studyModal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center p-0 sm:p-6 bg-zinc-950/60 backdrop-blur-xs" role="dialog" aria-modal="true">
+        <div class="bg-white rounded-t-3xl sm:rounded-3xl max-w-4xl w-full max-h-[92vh] sm:max-h-[90vh] overflow-y-auto lg:overflow-hidden shadow-2xl border border-border relative animate-fadeIn">
+            <!-- Sticky Mobile Header Bar inside Modal -->
+            <div class="sticky top-0 z-20 flex items-center justify-between px-5 py-3 bg-white/95 backdrop-blur-md border-b border-border lg:hidden">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Style Breakdown</span>
+                <button id="closeModalBtnMobile" type="button" aria-label="Close modal"
+                    class="w-9 h-9 rounded-full bg-zinc-100 active:bg-zinc-200 flex items-center justify-center text-ink transition-colors cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Desktop Close Button -->
+            <button id="closeModalBtn" type="button" aria-label="Close modal"
+                class="hidden lg:flex absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-white/90 hover:bg-zinc-100 border border-border items-center justify-center text-ink transition-colors cursor-pointer shadow-xs">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12">
+                <!-- Left Visual Showcase -->
+                <div class="lg:col-span-5 bg-zinc-100 p-5 sm:p-8 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-border">
+                    <div class="aspect-square max-w-[260px] sm:max-w-[320px] lg:max-w-none mx-auto w-full rounded-2xl overflow-hidden shadow-md bg-white border border-border" id="modalArtContainer">
+                        <!-- High-res SVG injected here -->
+                    </div>
+                    
+                    <div class="mt-5 sm:mt-6 space-y-4">
+                        <div>
+                            <span class="text-xs font-semibold uppercase tracking-wider text-muted block mb-2">Signature Color Palette</span>
+                            <div id="modalPalette" class="flex flex-wrap items-center gap-2.5">
+                                <!-- Color swatches injected here -->
+                            </div>
+                        </div>
+
+                        <!-- Real-World Museum & Archive Links -->
+                        <div class="pt-4 border-t border-zinc-200">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-muted flex items-center gap-1.5 mb-2.5">
+                                <svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path></svg>
+                                Free Museum & Archive Collections
+                            </span>
+                            <div id="modalArchives" class="flex flex-col gap-2">
+                                <!-- Archive links injected here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Educational Content -->
+                <div class="lg:col-span-7 p-5 sm:p-8 lg:max-h-[88vh] lg:overflow-y-auto pb-8">
+                    <div class="flex flex-wrap items-center gap-2 mb-2">
+                        <span id="modalCategory" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">Category</span>
+                        <span id="modalEra" class="text-xs font-medium text-muted">Era</span>
+                    </div>
+
+                    <h2 id="modalTitle" class="font-serif text-2xl sm:text-3xl font-bold text-ink">Style Title</h2>
+                    <p id="modalDescription" class="text-sm sm:text-base text-zinc-600 mt-3 leading-relaxed">
+                        Detailed overview goes here.
+                    </p>
+
+                    <div class="mt-6 space-y-5">
+                        <!-- Visual Hallmarks -->
+                        <div class="bg-zinc-50 rounded-2xl p-4 border border-border">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-ink mb-2.5 flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                Visual Hallmarks (How to Spot It)
+                            </h3>
+                            <ul id="modalHallmarks" class="space-y-1.5 text-sm text-zinc-700 list-disc list-inside">
+                                <!-- Hallmarks injected here -->
+                            </ul>
+                        </div>
+
+                        <!-- Mediums & Industry Uses -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="p-4 rounded-2xl border border-border">
+                                <span class="text-xs font-bold uppercase tracking-wider text-muted block mb-1">Common Mediums</span>
+                                <p id="modalMediums" class="text-sm font-medium text-ink">Tools & software</p>
+                            </div>
+                            <div class="p-4 rounded-2xl border border-border">
+                                <span class="text-xs font-bold uppercase tracking-wider text-muted block mb-1">Common Applications</span>
+                                <p id="modalUses" class="text-sm font-medium text-ink">Where it appears</p>
+                            </div>
+                        </div>
+
+                        <!-- Practice Exercise -->
+                        <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200">
+                            <span class="text-xs font-bold uppercase tracking-wider text-amber-800 block mb-1">Try It Yourself &mdash; Study Prompt</span>
+                            <p id="modalPrompt" class="text-sm text-amber-950 leading-relaxed">Practice exercise</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Comprehensive dataset of 12 distinct illustration art types
+        const illustrationStyles = [
+            {
+                id: 'flat-vector',
+                title: 'Flat Vector & Geometric',
+                category: 'Digital & Commercial',
+                era: '2010s – Present',
+                summary: 'Built from crisp mathematical shapes, solid color fills, and zero drop shadows or gradients. Flat illustration prioritizes instant clarity, bold silhouettes, and playful minimalism.',
+                hallmarks: [
+                    'Clean, un-outlined shapes with sharp geometric edges',
+                    'Limited, high-contrast color palettes (3–5 hues)',
+                    'Exaggerated human proportions (e.g., oversized limbs, tiny heads)',
+                    'Absence of realistic lighting, texture, or 3D depth'
+                ],
+                mediums: 'Adobe Illustrator, Figma, Affinity Designer',
+                uses: 'Tech product UI, mobile apps, corporate branding, infographics',
+                palette: ['#FF5A5F', '#00A699', '#FC642D', '#484848', '#F7F7F7'],
+                prompt: 'Illustrate a person watering a houseplant using only basic circles, rectangles, and 4 flat colors without any outlines.',
+                archives: [
+                    { name: 'Cooper Hewitt: Graphic Posters', url: 'https://collection.cooperhewitt.org/types/35238163/' },
+                    { name: 'V&A Museum: Graphic Design Collection', url: 'https://collections.vam.ac.uk/search/?q=graphic%20design%20poster&images_exist=true' }
+                ],
+                svg: `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="400" height="400" fill="#F7F7F7"/>
+                    <circle cx="280" cy="110" r="55" fill="#FC642D"/>
+                    <path d="M40 320 L150 180 L250 320 Z" fill="#00A699"/>
+                    <path d="M160 320 L260 150 L360 320 Z" fill="#FF5A5F"/>
+                    <rect x="40" y="320" width="320" height="40" rx="8" fill="#484848"/>
+                    <circle cx="115" cy="115" r="24" fill="#484848"/>
+                </svg>`
+            },
+            {
+                id: 'editorial-conceptual',
+                title: 'Conceptual Editorial',
+                category: 'Narrative & Editorial',
+                era: '1950s – Present',
+                summary: 'Idea-driven illustration designed to accompany essays, articles, and opinion pieces. Instead of depicting a literal scene, it uses visual metaphors to communicate complex social or psychological themes.',
+                hallmarks: [
+                    'Strong visual metaphors (e.g., a labyrinth inside a human head)',
+                    'Clever use of negative space and double-meaning silhouettes',
+                    'Subtle grain or screen-print textures for warmth',
+                    'Focused focal point that reads clearly at magazine scale'
+                ],
+                mediums: 'Procreate, Photoshop, Gouache, Screenprint',
+                uses: 'Newspapers (NYT, The New Yorker), magazines, book covers',
+                palette: ['#1E293B', '#E11D48', '#FBBF24', '#F8FAFC', '#64748B'],
+                prompt: 'Draw a visual metaphor for "burnout" or "information overload" using an everyday object like a coffee cup or lightbulb.',
+                archives: [
+                    { name: 'Library of Congress: Editorial Cartoons & Art', url: 'https://www.loc.gov/pictures/collection/acd/' },
+                    { name: 'Norman Rockwell Museum Digital Archives', url: 'https://www.nrm.org/collections-2/' }
+                ],
+                svg: `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="400" height="400" fill="#F8FAFC"/>
+                    <path d="M140 310 C140 240, 110 220, 110 165 A90 90 0 1 1 290 165 C290 220, 260 240, 260 310 Z" fill="#1E293B"/>
+                    <rect x="155" y="310" width="90" height="16" rx="4" fill="#64748B"/>
+                    <rect x="165" y="332" width="70" height="14" rx="4" fill="#64748B"/>
+                    <path d="M165 180 L185 150 L205 175 L235 130" fill="none" stroke="#FBBF24" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="235" cy="130" r="8" fill="#E11D48"/>
+                </svg>`
+            },
+            {
+                id: 'ukiyo-e',
+                title: 'Ukiyo-e Woodblock Style',
+                category: 'Historical Movements',
+                era: '17th – 19th Century Japan',
+                summary: 'Traditional Japanese woodblock printmaking ("pictures of the floating world") celebrated for dramatic asymmetrical compositions, bold organic outlines, and flat atmospheric color gradations.',
+                hallmarks: [
+                    'Fluid, calligraphic black ink key-lines of varying weight',
+                    'Bokashi (hand-rubbed color gradients in skies and water)',
+                    'Flattened perspective with bold foreground framing devices',
+                    'Nature motifs: waves, mist, mountains, and seasonal flora'
+                ],
+                mediums: 'Carved cherrywood blocks, sumi ink, mineral pigments on washi paper',
+                uses: 'Fine art prints, contemporary posters, tattoo art, album covers',
+                palette: ['#1D3557', '#457B9D', '#E63946', '#F1FAEE', '#D4A373'],
+                prompt: 'Sketch a landscape with an oversized foreground element (like a tree branch or wave) framing a distant mountain.',
+                archives: [
+                    { name: 'The Met: Japanese Woodblock Prints (Open Access)', url: 'https://www.metmuseum.org/art/collection/search?q=ukiyo-e&showOnly=openAccess' },
+                    { name: 'Library of Congress: Japanese Fine Prints', url: 'https://www.loc.gov/pictures/collection/jpd/' }
+                ],
+                svg: `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="400" height="400" fill="#F1FAEE"/>
+                    <circle cx="275" cy="115" r="42" fill="#E63946"/>
+                    <path d="M160 270 L255 135 L350 270 Z" fill="#457B9D" stroke="#1D3557" stroke-width="4"/>
+                    <path d="M225 178 L255 135 L285 178 L268 172 L255 186 L242 172 Z" fill="#F1FAEE"/>
+                    <path d="M30 290 Q110 190 210 265 T380 250 L380 370 L30 370 Z" fill="#1D3557"/>
+                    <path d="M55 265 Q115 215 175 260" fill="none" stroke="#F1FAEE" stroke-width="6" stroke-linecap="round"/>
+                    <rect x="24" y="24" width="352" height="352" fill="none" stroke="#1D3557" stroke-width="6"/>
+                </svg>`
+            },
+            {
+                id: 'art-nouveau',
+                title: 'Art Nouveau',
+                category: 'Historical Movements',
+                era: '1890 – 1910',
+                summary: 'An ornamental style inspired by natural forms—curving plant stems, flowing hair, and botanical arches—popularized by Alphonse Mucha in theatrical posters and decorative panels.',
+                hallmarks: [
+                    'Whiplash curves and flowing, asymmetrical organic lines',
+                    'Decorative circular halos and ornate architectural borders',
+                    'Muted, harmonious earth and jewel tones (sage, ochre, dusty rose)',
+                    'Integration of hand-lettered typography into the border design'
+                ],
+                mediums: 'Color lithography, ink, watercolor, gold leaf',
+                uses: 'Theater posters, packaging, jewelry design, stained glass',
+                palette: ['#D4A373', '#CCD5AE', '#E9EDC9', '#8C2F39', '#3D405B'],
+                prompt: 'Design a decorative frame around a portrait using twisting vines, lilies, and a circular geometric halo.',
+                archives: [
+                    { name: 'Art Institute of Chicago: Alphonse Mucha & Art Nouveau', url: 'https://www.artic.edu/collection?q=art%20nouveau&is_public_domain=1' },
+                    { name: 'Europeana: Art Nouveau Exhibition', url: 'https://www.europeana.eu/en/themes/art-nouveau' }
+                ],
+                svg: `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="400" height="400" fill="#E9EDC9"/>
+                    <rect x="28" y="28" width="344" height="344" rx="172" fill="#CCD5AE" stroke="#3D405B" stroke-width="3"/>
+                    <circle cx="200" cy="185" r="95" fill="#D4A373" stroke="#8C2F39" stroke-width="4"/>
+                    <circle cx="200" cy="185" r="78" fill="none" stroke="#E9EDC9" stroke-width="2" stroke-dasharray="6 4"/>
+                    <path d="M120 330 C120 250, 280 250, 280 330" fill="#8C2F39"/>
+                    <circle cx="200" cy="185" r="34" fill="#E9EDC9" stroke="#3D405B" stroke-width="2.5"/>
+                    <path d="M90 185 Q130 120 200 120 Q270 120 310 185" fill="none" stroke="#3D405B" stroke-width="2.5"/>
+                </svg>`
+            },
+            {
+                id: 'watercolor-wash',
+                title: 'Loose Watercolor & Botanical',
+                category: 'Traditional & Fine Art',
+                era: 'Classical – Present',
+                summary: 'Celebrates transparency, pigment blooms, and the luminosity of white paper shining through layered washes. Edges alternate between crisp wet-on-dry details and soft wet-on-wet bleeds.',
+                hallmarks: [
+                    'Luminous translucent glazes where colors overlap and mix',
+                    'Preserved unpainted white paper acting as bright highlights',
+                    'Organic water blooms, backruns, and soft feathered edges',
+                    'Delicate pen or pencil underdrawings visible beneath washes'
+                ],
+                mediums: 'Watercolor pans/tubes, cold-press cotton paper, round sable brushes',
+                uses: 'Children’s books, botanical field guides, wedding stationery, travel journals',
+                palette: ['#38BDF8', '#34D399', '#F472B6', '#FDE047', '#334155'],
+                prompt: 'Paint a simple piece of fruit using only 2 translucent colors, leaving the brightest highlight completely unpainted.',
+                archives: [
+                    { name: 'The Met: Open Access Watercolors', url: 'https://www.metmuseum.org/art/collection/search?q=watercolor&showOnly=openAccess' },
+                    { name: 'Biodiversity Heritage Library (Botanical Watercolors)', url: 'https://www.biodiversitylibrary.org/' }
+                ],
+                svg: `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="400" height="400" fill="#FFFDF9"/>
+                    <circle cx="165" cy="185" r="85" fill="#38BDF8" fill-opacity="0.45"/>
+                    <circle cx="235" cy="175" r="80" fill="#F472B6" fill-opacity="0.45"/>
+                    <circle cx="200" cy="240" r="75" fill="#34D399" fill-opacity="0.45"/>
+                    <path d="M200 320 C200 240, 205 180, 200 110" fill="none" stroke="#334155" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M200 220 Q155 190 145 155 Q185 165 200 220 Z" fill="#34D399" fill-opacity="0.6" stroke="#334155" stroke-width="1.5"/>
+                    <path d="M200 185 Q245 155 260 125 Q220 135 200 185 Z" fill="#38BDF8" fill-opacity="0.6" stroke="#334155" stroke-width="1.5"/>
+                </svg>`
+            },
+            {
+                id: 'ligne-claire',
+                title: 'Ligne Claire (Clear Line)',
+                category: 'Narrative & Editorial',
+                era: '1930s – Present (Belgian/French)',
+                summary: 'Pioneered by Hergé (creator of Tintin), Ligne Claire uses uniform, crisp black outlines of equal thickness with zero hatching, paired with flat, realistic colors and highly detailed backgrounds.',
+                hallmarks: [
+                    'Continuous, monoline black ink outlines of uniform width',
+                    'Absence of cross-hatching or painterly shading gradients',
+                    'Flat, solid color fills with crisp architectural perspective',
+                    'Simplified, iconic characters placed inside richly researched worlds'
+                ],
+                mediums: 'Dip pens, technical fineliners, digital vector/ink brushes',
+                uses: 'Graphic novels, architectural illustration, travel posters, editorial comics',
+                palette: ['#EF4444', '#3B82F6', '#FACC15', '#E2E8F0', '#0F172A'],
+                prompt: 'Draw a street corner or vehicle using a single fine-liner pen thickness, adding color with flat tones and no shading gradients.',
+                archives: [
+                    { name: 'Library of Congress: Comic & Cartoon Art', url: 'https://www.loc.gov/collections/comic-book-collection/' },
+                    { name: 'Cooper Hewitt: Architectural & Line Drawings', url: 'https://collection.cooperhewitt.org/departments/35347493/' }
+                ],
+                svg: `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="400" height="400" fill="#E2E8F0"/>
+                    <rect x="60" y="90" width="180" height="230" fill="#FACC15" stroke="#0F172A" stroke-width="3.5"/>
+                    <rect x="240" y="140" width="100" height="180" fill="#3B82F6" stroke="#0F172A" stroke-width="3.5"/>
+                    <rect x="90" y="130" width="45" height="55" fill="#FFFFFF" stroke="#0F172A" stroke-width="3.5"/>
+                    <rect x="165" y="130" width="45" height="55" fill="#FFFFFF" stroke="#0F172A" stroke-width="3.5"/>
+                    <rect x="125" y="235" width="50" height="85" fill="#EF4444" stroke="#0F172A" stroke-width="3.5"/>
+                    <line x1="30" y1="320" x2="370" y2="320" stroke="#0F172A" stroke-width="3.5"/>
+                </svg>`
+            },
+            {
+                id: 'isometric-3d',
+                title: 'Isometric & Axonometric',
+                category: 'Digital & Commercial',
+                era: 'Technical Roots – Modern UI',
+                summary: 'A method of visually representing three-dimensional objects in two dimensions where parallel lines never converge toward a vanishing point, creating clean "miniature diorama" worlds.',
+                hallmarks: [
+                    '30-degree angled axes with zero perspective distortion',
+                    'Cutaway cross-sections showing interiors of rooms or machines',
+                    'Three distinct light values (top, left, and right faces) for instant volume',
+                    'Modular, grid-aligned architectural precision'
+                ],
+                mediums: 'Adobe Illustrator (3D & Grid tools), Blender, Cinema 4D',
+                uses: 'Video games, tech architecture diagrams, city maps, explainer graphics',
+                palette: ['#6366F1', '#818CF8', '#C7D2FE', '#10B981', '#F59E0B'],
+                prompt: 'Sketch your bedroom or desk setup as a floating cutaway cube aligned to a 30-degree diamond grid.',
+                archives: [
+                    { name: 'Cooper Hewitt: Architectural & Axonometric Drawings', url: 'https://collection.cooperhewitt.org/search/collection?query=axonometric' },
+                    { name: 'David Rumsey Historical Map & Cutaway Collection', url: 'https://www.davidrumsey.com/' }
+                ],
+                svg: `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="400" height="400" fill="#EEF2FF"/>
+                    <!-- Top Face -->
+                    <polygon points="200,90 310,153 200,216 90,153" fill="#C7D2FE"/>
+                    <!-- Left Face -->
+                    <polygon points="90,153 200,216 200,330 90,267" fill="#818CF8"/>
+                    <!-- Right Face -->
+                    <polygon points="200,216 310,153 310,267 200,330" fill="#6366F1"/>
+                    <!-- Floating Accent Cube -->
+                    <polygon points="200,55 245,81 200,107 155,81" fill="#FDE047"/>
+                    <polygon points="155,81 200,107 200,155 155,129" fill="#F59E0B"/>
+                    <polygon points="200,107 245,81 245,129 200,155" fill="#D97706"/>
+                </svg>`
+            },
+            {
+                id: 'engraving-hatching',
+                title: 'Engraving & Cross-Hatching',
+                category: 'Traditional & Fine Art',
+                era: '15th Century – Present',
+                summary: 'Originally developed for copperplate and woodcut printing presses, this technique builds form, shadow, and rich texture exclusively through dense networks of parallel and intersecting ink lines.',
+                hallmarks: [
+                    'Shading created solely through line density and spacing (no gray washes)',
+                    'Contour hatching that wraps around the 3D curvature of objects',
+                    'High-contrast black-and-white vintage authority',
+                    'Tapered line ends mimicking physical burin or nib pressure'
+                ],
+                mediums: 'Crowquill dip pens, scratchboard, copperplate burins, Procreate ink brushes',
+                uses: 'Currency design, craft beverage labels, classic book plates, vintage logos',
+                palette: ['#1C1917', '#44403C', '#D6D3D1', '#F5F5F4', '#B45309'],
+                prompt: 'Shade a sphere using only curved parallel lines that follow its round surface—no smudging allowed.',
+                archives: [
+                    { name: 'Rijksmuseum: Master Engravings & Etchings', url: 'https://www.rijksmuseum.nl/en/rijksstudio/works-of-art/prints' },
+                    { name: 'National Gallery of Art: Open Access Prints', url: 'https://www.nga.gov/open-access-images.html' }
+                ],
+                svg: `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="400" height="400" fill="#F5F5F4"/>
+                    <circle cx="200" cy="200" r="110" fill="none" stroke="#1C1917" stroke-width="3"/>
+                    <path d="M100 160 Q200 210 300 160" fill="none" stroke="#1C1917" stroke-width="2"/>
+                    <path d="M92 185 Q200 245 308 185" fill="none" stroke="#1C1917" stroke-width="2.5"/>
+                    <path d="M92 210 Q200 275 308 210" fill="none" stroke="#1C1917" stroke-width="3"/>
+                    <path d="M102 235 Q200 305 298 235" fill="none" stroke="#1C1917" stroke-width="3.5"/>
+                    <path d="M122 260 Q200 325 278 260" fill="none" stroke="#1C1917" stroke-width="4"/>
+                    <path d="M150 285 Q200 335 250 285" fill="none" stroke="#1C1917" stroke-width="4.5"/>
+                </svg>`
+            },
+            {
+                id: 'psychedelic-60s',
+                title: '1960s Psychedelic Poster',
+                category: 'Historical Movements',
+                era: '1965 – 1972 (San Francisco)',
+                summary: 'Born in the counterculture music scene of the 1960s, this style merges Art Nouveau curves with Op-Art vibrating colors and hand-lettered typography that melts into the surrounding artwork.',
+                hallmarks: [
+                    'Vibrating complementary color combinations (simultaneous contrast)',
+                    'Warped, liquid hand-drawn lettering filling every inch of space',
+                    'Kaleidoscopic symmetry, melting motifs, and swirling aura lines',
+                    'Zero negative space—maximalist composition edge-to-edge'
+                ],
+                mediums: 'Gouache, ink, offset lithography, screenprinting',
+                uses: 'Concert posters, vinyl album sleeves, festival branding, apparel',
+                palette: ['#FF007F', '#FF7F00', '#FFD700', '#00E5FF', '#4A00E0'],
+                prompt: 'Draw a sun or flower where its rays/petals melt into swirling waves using 3 intense, high-contrast neon colors.',
+                archives: [
+                    { name: 'V&A Museum: 1960s Psychedelic Posters', url: 'https://collections.vam.ac.uk/search/?q=psychedelic%20poster&images_exist=true' },
+                    { name: 'Library of Congress: 1960s-70s Poster Collection', url: 'https://www.loc.gov/pictures/collection/pos/' }
+                ],
+                svg: `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="400" height="400" fill="#4A00E0"/>
+                    <path d="M0 120 Q100 40 200 120 T400 120 L400 400 L0 400 Z" fill="#FF007F"/>
+                    <path d="M0 190 Q100 110 200 190 T400 190 L400 400 L0 400 Z" fill="#FF7F00"/>
+                    <path d="M0 260 Q100 180 200 260 T400 260 L400 400 L0 400 Z" fill="#FFD700"/>
+                    <circle cx="200" cy="145" r="55" fill="#00E5FF"/>
+                    <circle cx="200" cy="145" r="28" fill="#4A00E0"/>
+                </svg>`
+            },
+            {
+                id: 'paper-cutout',
+                title: 'Paper Cut-Out & Collage',
+                category: 'Traditional & Fine Art',
+                era: 'Matisse Cut-Outs – Modern Digital',
+                summary: 'Inspired by Henri Matisse’s "drawing with scissors" and Eric Carle’s textured picture books, this style layers torn or scissor-cut shapes with subtle drop shadows to create tactile depth.',
+                hallmarks: [
+                    'Crisp, slightly irregular scissor-cut silhouettes and organic shapes',
+                    'Layered elevation with soft cast shadows between paper planes',
+                    'Visible paper grain, speckled fibers, or hand-painted textures',
+                    'Bold, simplified color blocking with joyful rhythm'
+                ],
+                mediums: 'Gouache-painted paper, cardstock, X-Acto knives, digital lasso + drop shadows',
+                uses: 'Children’s picture books, editorial spot art, stop-motion animation',
+                palette: ['#E07A5F', '#3D405B', '#81B29A', '#F2CC8F', '#F4F1DE'],
+                prompt: 'Cut colored paper scraps (or use digital lasso fills with drop shadows) to build a layered jungle scene.',
+                archives: [
+                    { name: 'Tate: Henri Matisse Cut-Outs Study Guide', url: 'https://www.tate.org.uk/art/artists/henri-matisse-1593/henri-matisse-cut-outs' },
+                    { name: 'Cooper Hewitt: Paper & Cutwork Collection', url: 'https://collection.cooperhewitt.org/search/collection?query=cut%20paper' }
+                ],
+                svg: `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="paperShadow" x="-10%" y="-10%" width="125%" height="125%">
+                            <feDropShadow dx="3" dy="6" stdDeviation="4" flood-color="#000000" flood-opacity="0.22"/>
+                        </filter>
+                    </defs>
+                    <rect width="400" height="400" fill="#F4F1DE"/>
+                    <path d="M40 340 L95 140 L165 210 L210 110 L285 225 L350 150 L370 340 Z" fill="#81B29A" filter="url(#paperShadow)"/>
+                    <circle cx="290" cy="95" r="42" fill="#F2CC8F" filter="url(#paperShadow)"/>
+                    <path d="M30 360 Q140 250 240 310 T380 280 L380 380 L30 380 Z" fill="#E07A5F" filter="url(#paperShadow)"/>
+                    <path d="M110 380 L145 260 L195 380 Z" fill="#3D405B" filter="url(#paperShadow)"/>
+                </svg>`
+            },
+            {
+                id: 'painterly-concept',
+                title: 'Painterly & Atmospheric Concept Art',
+                category: 'Digital & Commercial',
+                era: '1990s – Present',
+                summary: 'Focused on mood, cinematic lighting, and environment storytelling rather than crisp outlines. Artists use textured digital brushes to sculpt forms out of light, shadow, and atmospheric perspective.',
+                hallmarks: [
+                    'Lineless forms defined by value contrast and edge control (hard vs. soft edges)',
+                    'Dramatic rim lighting, volumetric fog, and color temperature shifts',
+                    'Visible impasto or chalky brushwork textures',
+                    'Strong sense of scale and cinematic camera framing'
+                ],
+                mediums: 'Adobe Photoshop, Procreate, Rebelle, Corel Painter',
+                uses: 'Video game & film production design, fantasy book covers, keyframe art',
+                palette: ['#0F172A', '#1E3A8A', '#0284C7', '#38BDF8', '#FDE047'],
+                prompt: 'Paint a glowing lantern or campfire at night using soft, lineless brushstrokes to show how light falls off into darkness.',
+                archives: [
+                    { name: 'Smithsonian American Art Museum: Golden Age Illustrators', url: 'https://americanart.si.edu/art/browse' },
+                    { name: 'Google Arts & Culture: Illustration & Painting', url: 'https://artsandculture.google.com/category/art-movement' }
+                ],
+                svg: `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <radialGradient id="glow" cx="50%" cy="45%" r="50%">
+                            <stop offset="0%" stop-color="#FDE047" stop-opacity="0.95"/>
+                            <stop offset="35%" stop-color="#38BDF8" stop-opacity="0.45"/>
+                            <stop offset="100%" stop-color="#0F172A" stop-opacity="1"/>
+                        </radialGradient>
+                    </defs>
+                    <rect width="400" height="400" fill="url(#glow)"/>
+                    <path d="M0 290 L110 210 L185 265 L280 185 L400 280 L400 400 L0 400 Z" fill="#1E3A8A" fill-opacity="0.75"/>
+                    <path d="M0 330 L140 275 L250 320 L400 265 L400 400 L0 400 Z" fill="#0F172A"/>
+                    <circle cx="200" cy="175" r="18" fill="#FEF9C3"/>
+                </svg>`
+            },
+            {
+                id: 'anime-cel',
+                title: 'Cel-Shaded & Manga Stylized',
+                category: 'Narrative & Editorial',
+                era: 'Mid-20th Century – Present',
+                summary: 'Rooted in Japanese comics and animation, characterized by expressive character acting, dynamic camera angles, crisp ink linework, and hard-edged "cel" shadow shapes.',
+                hallmarks: [
+                    'Expressive facial proportions with detailed, light-catching eyes',
+                    'Crisp, hard-edged shadow shapes (cel shading) with minimal soft blending',
+                    'Dynamic speed lines, dramatic foreshortening, and hair silhouettes',
+                    'High-saturation accent highlights and rim lights'
+                ],
+                mediums: 'Clip Studio Paint, Copic Markers, G-Pens, Procreate',
+                uses: 'Manga, anime key visuals, character design sheets, webtoons, gaming',
+                palette: ['#F43F5E', '#3B82F6', '#FBBF24', '#1E293B', '#FFFFFF'],
+                prompt: 'Draw a character portrait focusing on dramatic rim lighting and expressive eyes with multiple light reflections.',
+                archives: [
+                    { name: 'Kyoto International Manga Museum', url: 'https://kyotomm.jp/en/' },
+                    { name: 'Library of Congress: Japanese Manga & Woodblock Roots', url: 'https://www.loc.gov/collections/japanese-fine-prints-pre-1915/' }
+                ],
+                svg: `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="400" height="400" fill="#1E293B"/>
+                    <polygon points="0,0 260,0 140,400 0,400" fill="#3B82F6"/>
+                    <polygon points="260,0 400,0 400,400 140,400" fill="#F43F5E"/>
+                    <!-- Stylized Star Sparkle -->
+                    <path d="M200 75 L222 178 L325 200 L222 222 L200 325 L178 222 L75 200 L178 178 Z" fill="#FFFFFF" stroke="#1E293B" stroke-width="5" stroke-linejoin="round"/>
+                    <circle cx="200" cy="200" r="24" fill="#FBBF24" stroke="#1E293B" stroke-width="4"/>
+                </svg>`
+            }
+        ];
+
+        // State management
+        let activeCategory = 'All';
+        let searchQuery = '';
+
+        // DOM references
+        const galleryGrid = document.getElementById('galleryGrid');
+        const resultsCount = document.getElementById('resultsCount');
+        const emptyState = document.getElementById('emptyState');
+        const searchInput = document.getElementById('searchInput');
+        const filterPills = document.querySelectorAll('.filter-pill');
+        const surpriseBtn = document.getElementById('surpriseBtn');
+        const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+        const studyModal = document.getElementById('studyModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const closeModalBtnMobile = document.getElementById('closeModalBtnMobile');
+
+        // Render gallery cards based on active filters
+        function renderGallery() {
+            const query = searchQuery.toLowerCase().trim();
+            
+            const filtered = illustrationStyles.filter(style => {
+                const matchesCategory = activeCategory === 'All' || style.category === activeCategory;
+                const matchesSearch = !query || 
+                    style.title.toLowerCase().includes(query) ||
+                    style.category.toLowerCase().includes(query) ||
+                    style.era.toLowerCase().includes(query) ||
+                    style.summary.toLowerCase().includes(query) ||
+                    style.mediums.toLowerCase().includes(query) ||
+                    style.uses.toLowerCase().includes(query);
+                return matchesCategory && matchesSearch;
+            });
+
+            galleryGrid.innerHTML = '';
+
+            if (filtered.length === 0) {
+                galleryGrid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                resultsCount.textContent = '0 styles found';
+                return;
+            }
+
+            galleryGrid.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            resultsCount.textContent = `Showing ${filtered.length} ${filtered.length === 1 ? 'illustration style' : 'illustration styles'}`;
+
+            filtered.forEach(style => {
+                const card = document.createElement('article');
+                card.className = 'art-card bg-white rounded-2xl border border-border overflow-hidden flex flex-col cursor-pointer group';
+                card.setAttribute('tabindex', '0');
+                card.setAttribute('role', 'button');
+                card.setAttribute('aria-label', `Study ${style.title}`);
+
+                card.innerHTML = `
+                    <div class="aspect-square w-full bg-zinc-50 border-b border-border overflow-hidden relative">
+                        ${style.svg}
+                        <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/90 backdrop-blur-xs text-ink shadow-xs border border-black/5">
+                            ${style.category}
+                        </span>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                            <span class="text-[11px] font-medium text-muted block mb-1">${style.era}</span>
+                            <h2 class="font-serif text-lg font-bold text-ink group-hover:text-amber-700 transition-colors">
+                                ${style.title}
+                            </h2>
+                            <p class="text-xs text-zinc-600 mt-2 line-clamp-3 leading-relaxed">
+                                ${style.summary}
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between">
+                            <div class="flex -space-x-1">
+                                ${style.palette.slice(0, 4).map(color => `
+                                    <span class="w-4 h-4 rounded-full border border-white shadow-2xs" style="background-color: ${color};"></span>
+                                `).join('')}
+                            </div>
+                            <span class="text-xs font-semibold text-amber-700 group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                                Study Style &rarr;
+                            </span>
+                        </div>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => openStudyModal(style));
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openStudyModal(style);
+                    }
+                });
+
+                galleryGrid.appendChild(card);
+            });
+        }
+
+        // Open detailed study modal for a selected style
+        function openStudyModal(style) {
+            document.getElementById('modalArtContainer').innerHTML = style.svg;
+            document.getElementById('modalCategory').textContent = style.category;
+            document.getElementById('modalEra').textContent = style.era;
+            document.getElementById('modalTitle').textContent = style.title;
+            document.getElementById('modalDescription').textContent = style.summary;
+            document.getElementById('modalMediums').textContent = style.mediums;
+            document.getElementById('modalUses').textContent = style.uses;
+            document.getElementById('modalPrompt').textContent = style.prompt;
+
+            // Render hallmarks list
+            document.getElementById('modalHallmarks').innerHTML = style.hallmarks
+                .map(item => `<li>${item}</li>`)
+                .join('');
+
+            // Render color swatches
+            document.getElementById('modalPalette').innerHTML = style.palette
+                .map(hex => `
+                    <div class="flex flex-col items-center gap-1">
+                        <div class="w-8 h-8 rounded-lg border border-black/10 shadow-xs" style="background-color: ${hex};" title="${hex}"></div>
+                        <span class="text-[10px] font-mono text-muted">${hex}</span>
+                    </div>
+                `).join('');
+
+            // Render real-world museum & archive links
+            const archivesContainer = document.getElementById('modalArchives');
+            if (style.archives && style.archives.length > 0) {
+                archivesContainer.innerHTML = style.archives
+                    .map(link => `
+                        <a href="${link.url}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-white border border-border hover:border-amber-500 active:bg-amber-50 hover:text-amber-700 text-xs font-medium text-ink transition-all shadow-2xs group">
+                            <span class="truncate">${link.name}</span>
+                            <svg class="w-3.5 h-3.5 text-zinc-400 group-hover:text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                        </a>
+                    `).join('');
+            } else {
+                archivesContainer.innerHTML = '';
+            }
+
+            // Reset modal scroll position to top when opened
+            const modalDialog = studyModal.firstElementChild;
+            if (modalDialog) modalDialog.scrollTop = 0;
+
+            studyModal.classList.remove('hidden');
+            studyModal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close modal
+        function closeStudyModal() {
+            studyModal.classList.add('hidden');
+            studyModal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+
+        // Event Listeners
+        filterPills.forEach(pill => {
+            pill.addEventListener('click', () => {
+                filterPills.forEach(p => {
+                    p.classList.remove('bg-ink', 'text-white');
+                    p.classList.add('bg-zinc-100', 'text-zinc-700');
+                });
+                pill.classList.remove('bg-zinc-100', 'text-zinc-700');
+                pill.classList.add('bg-ink', 'text-white');
+
+                activeCategory = pill.getAttribute('data-category');
+                renderGallery();
+            });
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderGallery();
+        });
+
+        surpriseBtn.addEventListener('click', () => {
+            const randomIndex = Math.floor(Math.random() * illustrationStyles.length);
+            openStudyModal(illustrationStyles[randomIndex]);
+        });
+
+        resetFiltersBtn.addEventListener('click', () => {
+            activeCategory = 'All';
+            searchQuery = '';
+            searchInput.value = '';
+            filterPills.forEach(p => {
+                const isAll = p.getAttribute('data-category') === 'All';
+                p.classList.toggle('bg-ink', isAll);
+                p.classList.toggle('text-white', isAll);
+                p.classList.toggle('bg-zinc-100', !isAll);
+                p.classList.toggle('text-zinc-700', !isAll);
+            });
+            renderGallery();
+        });
+
+        closeModalBtn.addEventListener('click', closeStudyModal);
+        if (closeModalBtnMobile) {
+            closeModalBtnMobile.addEventListener('click', closeStudyModal);
+        }
+
+        studyModal.addEventListener('click', (e) => {
+            if (e.target === studyModal) {
+                closeStudyModal();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !studyModal.classList.contains('hidden')) {
+                closeStudyModal();
+            }
+        });
+
+        // Initial render
+        renderGallery();
+    </script>
+</body>
+</html>
